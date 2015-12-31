@@ -1,8 +1,8 @@
 #include "JSmodule.h"
 
-bool isseixtFunc(string name, int numofpara)
+bool isexistFunc(string name, int numofpara)
 {
-	for (vector<FunctionDef>::iterator i = FunctionDefs.begin();
+	for (vector<JSFunctionDef>::iterator i = FunctionDefs.begin();
 			 i != FunctionDefs.end(); i++)
 	{
 		if (i->name == name && i->numofpara == numofpara)
@@ -20,7 +20,7 @@ bool createFunc(string name, string rtype, vector<string>paras, string code)
 		return false;
 	}
 	int numofpara = 0;
-	FunctionDef newfunc;
+	JSFunctionDef newfunc;
 	for (vector<string>::iterator i = paras.begin();
 			 i != paras.end(); i++)
 	{
@@ -39,12 +39,12 @@ bool createFunc(string name, string rtype, vector<string>paras, string code)
 	return true;
 }
 
-Variable callFunc(string name, Variables paras)
+JSVariable callFunc(string name, JSVariables paras)
 {
-	Variable nullresult;
+	JSVariable nullresult;
 	nullresult.defined = false;
 	int numofpara = 0;
-	for (Variables::iterator i = paras.begin();
+	for (JSVariables::iterator i = paras.begin();
 			 i != paras.end(); i++)
 	{
 		numofpara++;
@@ -53,10 +53,10 @@ Variable callFunc(string name, Variables paras)
 	{
 		return nullresult;
 	}
-	Function torun;
+	JSFunction torun;
 	torun.levelcount = 0;
 	torun.name = name;
-	for (Variables::iterator i = paras.begin();
+	for (JSVariables::iterator i = paras.begin();
 			 i != paras.end(); i++)
 	{
 		torun.variables.push_back(*i);
@@ -69,7 +69,7 @@ Variable callFunc(string name, Variables paras)
 
 }
 
-void setReturnval(Variable returnval)
+void setReturnval(JSVariable returnval)
 {
 	(Stack.end() - 1)->returnvalue = returnval;
 }
@@ -100,14 +100,27 @@ bool downlevel()
 	{
 		return true;
 	}
-	(Stack.end() - 1)->levelcount--;
+	JSFunctions::iterator nowfunc = Stack.end() - 1;
+	for (JSVariables::iterator i = nowfunc->variables.begin();
+			 i != nowfunc->variables.end(); )
+	{
+		if (i->level == nowfunc->levelcount)
+		{
+			i = nowfunc->variables.erase(i);
+		}
+		else
+		{
+			i++;
+		}
+	}
+	nowfunc->levelcount--;
 }
 
 bool isexistVar(string name)
 {
 	if (!Stack.empty())
 	{
-		for (Variables::iterator i = (Stack.end() - 1)->variables.begin();
+		for (JSVariables::iterator i = (Stack.end() - 1)->variables.begin();
 				 i != (Stack.end() - 1)->variables.end(); i++)
 		{
 			if (i->name == name)
@@ -116,7 +129,7 @@ bool isexistVar(string name)
 			}
 		}
 	}
-	for (Variables::iterator i = globals.begin();
+	for (JSVariables::iterator i = globals.begin();
 			 i != globals.end(); i++)
 	{
 		if (i->name == name)
@@ -127,17 +140,17 @@ bool isexistVar(string name)
 	return false;
 }
 
-bool createVar(string name, bool global)
+bool createVar(string name, bool isGlobal)
 {
 	if (isexistVar(name))
 	{
 		return false;
 	}
-	Variable newvar;
+	JSVariable newvar;
 	newvar.tname = UNDEFINED;
 	newvar.name = name;
 	newvar.defined = false;
-	if (global)
+	if (isGlobal)
 	{
 		globals.push_back(newvar);
 	}
@@ -153,11 +166,11 @@ bool createVar(string name, bool global)
 	return true;
 }
 
-Variable& getVariable(string name)
+JSVariable& getVariable(string name)
 {
 	if (!Stack.empty())
 	{
-		for (Variables::iterator i = (Stack.end() - 1)->variables.begin();
+		for (JSVariables::iterator i = (Stack.end() - 1)->variables.begin();
 				 i != (Stack.end() - 1)->variables.end(); i++)
 		{
 			if (i->name == name)
@@ -166,7 +179,7 @@ Variable& getVariable(string name)
 			}
 		}
 	}
-	for (Variables::iterator i = globals.begin();
+	for (JSVariables::iterator i = globals.begin();
 			 i != globals.end(); i++)
 	{
 		if (i->name == name)
@@ -176,13 +189,13 @@ Variable& getVariable(string name)
 	}
 }
 
-bool setVar(string name, Variable val)
+bool setVar(string name, JSVariable val)
 {
 	if (!isexistVar(name))
 	{
 		return false;
 	}
-	Variable& ref = getVariable(name);
+	JSVariable& ref = getVariable(name);
 	ref = val;
 	return true;
 }
@@ -195,7 +208,7 @@ bool unsetVar(string name)
 	}
 	if (!Stack.empty())
 	{
-		for (Variables::iterator i = (Stack.end() - 1)->variables.begin();
+		for (JSVariables::iterator i = (Stack.end() - 1)->variables.begin();
 				 i != (Stack.end() - 1)->variables.end(); i++)
 		{
 			if (i->name == name)
@@ -205,7 +218,7 @@ bool unsetVar(string name)
 			}
 		}
 	}
-	for (Variables::iterator i = globals.begin();
+	for (JSVariables::iterator i = globals.begin();
 			 i != globals.end(); i++)
 	{
 		if (i->name == name)

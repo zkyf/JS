@@ -14,7 +14,7 @@ using namespace std;
 #define ARRAY  "Array"
 #define UNDEFINED "Undefined"
 
-class Data
+class JSData
 {
 	public:
 	string tname; //类型名
@@ -22,30 +22,31 @@ class Data
 	string str;   //存字符串
 };
 
-class Variable
+class JSVariable
 {
 	public:
 	string name;  //变量名
 	string tname; //类型名
 	bool defined; //是否定义过
-	vector<Data> data; //数据
+	vector<JSData> data; //Array数据
+	JSData _data; //Number/Sring Data
 	int level; //
 };
 
-typedef vector<Variable> Variables;
+typedef vector<JSVariable> JSVariables;
 
 //表示函数实体的类
-class Function
+class JSFunction
 {
 	public:
 	string name;
-	Variables variables;
+	JSVariables variables;
 	int levelcount;
-	Variable returnvalue;
+	JSVariable returnvalue;
 };
 
 //函数定义的类
-class FunctionDef
+class JSFunctionDef
 {
 	public:
 	string name;
@@ -55,24 +56,24 @@ class FunctionDef
 	string code;
 };
 
-typedef vector<Function> Functions;
+typedef vector<JSFunction> JSFunctions;
 
-vector<FunctionDef> FunctionDefs;
-Functions Stack;
-Variables globals;
+static vector<JSFunctionDef> FunctionDefs;
+static JSFunctions Stack;
+static JSVariables globals;
 
 bool isexistFunc(string name, int numofpara);
 bool createFunc(string name, string rtype, vector<string>paras, char *code);
-Variable callFunc(string name, Variables paras);
-void setReturnval(Variable returnval);
+JSVariable callFunc(string name, JSVariables paras);
+void setReturnval(JSVariable returnval);
 bool endcall(); //结束一个函数调用
 bool uplevel(); //检测到{，提升一层
 bool downlevel(); //检测到}，降低一层
 
 bool isexistVar(string name);
-bool createVar(Variable var, bool global);
-Variable& getVariable(string name);
-bool setVar(string name, Variable val);
+bool createVar(string var, bool isGlobal);
+JSVariable& getVariable(string name);
+bool setVar(string name, JSVariable val);
 bool unsetVar(string name);
 
 #endif
