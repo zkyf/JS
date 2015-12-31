@@ -1,5 +1,60 @@
 #include "JSmodule.h"
 
+JSData::JSData() :
+tname(UNDEFINED)
+{}
+
+JSVariable::JSVariable() :
+name(""), tname(UNDEFINED), defined(false)
+{}
+
+JSVariable::JSVariable(string _name) :
+name(_name), tname(UNDEFINED), defined(false)
+{}
+
+JSVariable::JSVariable(string _name, string _tname) :
+name(_name), tname(_tname), defined(false)
+{}
+
+void JSVariable::operator=(JSVariable& b)
+{
+	tname = b.tname;
+	defined = b.defined;
+	_data = b._data;
+	data.clear();
+	for (vector<JSData>::iterator i = b.data.begin();
+			 i != b.data.end(); i++)
+	{
+		data.push_back(*i);
+	}
+}
+
+JSData JSVariable::value()
+{
+	JSData _val;
+	if(tname == NUMBER)
+	{
+		_val.tname = NUMBER;
+		_val.num = _data.num;
+	}
+	else if (tname == STRING)
+	{
+		_val.tname = STRING;
+		_val.str = _data.str;
+	}
+	return _val;
+}
+
+JSData JSVariable::at(int index)
+{
+	JSData _val;
+	if (tname == ARRAY && index < data.size())
+	{
+		_val = data[index];
+	}
+	return _val;
+}
+
 bool isexistFunc(string name, int numofpara)
 {
 	for (vector<JSFunctionDef>::iterator i = FunctionDefs.begin();
@@ -198,6 +253,37 @@ bool setVar(string name, JSVariable val)
 	JSVariable& ref = getVariable(name);
 	ref = val;
 	return true;
+}
+
+bool setVar(string name, double number)
+{
+	JSVariable _val;
+	_val.defined = true;
+	_val.tname = NUMBER;
+	_val._data.num = number;
+	return setVar(name, _val);
+}
+
+bool setVar(string name, string str)
+{
+	JSVariable _val;
+	_val.defined = true;
+	_val.tname = STRING;
+	_val._data.str = str;
+	return setVar(name, _val);
+}
+
+bool setVar(string name, vector<JSData> data)
+{
+	JSVariable _val;
+	_val.defined = true;
+	_val.tname = ARRAY;
+	for (vector<JSData>::iterator i = data.begin();
+			 i != data.end(); i++)
+	{
+		_val.data.push_back(*i);
+	}
+	return setVar(name, _val);
 }
 
 bool unsetVar(string name)

@@ -17,5 +17,14 @@ int main()
 	{
 		cout << "x not found\n";
 	}
+
+	JSVariable& x = getVariable("x");
+	x.tname = NUMBER;
+	x._data.num = 10;
+	cout << x._data.num << endl;
+
+	setVar("x", "hahaha");
+	cout << x._data.str << endl;
+
 	system("pause");
 }

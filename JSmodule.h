@@ -20,7 +20,11 @@ class JSData
 	string tname; //类型名
 	double num;   //存数值
 	string str;   //存字符串
+
+	JSData();
 };
+
+typedef vector<JSData> JSArray;
 
 class JSVariable
 {
@@ -28,9 +32,17 @@ class JSVariable
 	string name;  //变量名
 	string tname; //类型名
 	bool defined; //是否定义过
-	vector<JSData> data; //Array数据
+	JSArray data; //Array数据
 	JSData _data; //Number/Sring Data
 	int level; //
+
+	JSVariable();
+	JSVariable(string _name);
+	JSVariable(string _name, string _tname);
+
+	void operator=(JSVariable& b);
+	JSData value();
+	JSData at(int index);
 };
 
 typedef vector<JSVariable> JSVariables;
@@ -74,6 +86,9 @@ bool isexistVar(string name);
 bool createVar(string var, bool isGlobal);
 JSVariable& getVariable(string name);
 bool setVar(string name, JSVariable val);
+bool setVar(string name, double number);
+bool setVar(string name, string str);
+bool setVar(string name, vector<JSData> data);
 bool unsetVar(string name);
 
 #endif
