@@ -1,30 +1,34 @@
-#include "JSmodule.h"
-#include <stdio.h>
-#include <stdlib.h>
+
 #include <iostream>
 #include <string>
-
+#include <fstream>
+#include "ExpressionAnalyser.h"
 using namespace std;
-
+ExpressionAnalyser woot;
 int main()
 {
-	createVar("x", true);
-	if (isexistVar("x"))
+	string tem;
+	getline(cin, tem);
+	createVar("_x", true);
+	JSVariable& x = getVariable("_x");
+	x.tname = NUMBER;
+	x._data.num = 10;
+
+	woot.readExpression(tem);
+	woot.writeExpression();
+	woot.calcExpression();
+	JSVariable hehe = woot.getResult();
+	if (woot.getErrorcode() == 0)
 	{
-		cout << "x found!\n";
+		if (hehe.tname == STRING)
+			cout << hehe._data.str << endl;
+		else if (hehe.tname == NUMBER)
+			cout << hehe._data.num << endl;
+		cout << woot.isAssignment() << endl;
 	}
 	else
 	{
-		cout << "x not found\n";
+		woot.showErrors();
 	}
-
-	JSVariable& x = getVariable("x");
-	x.tname = NUMBER;
-	x._data.num = 10;
-	cout << x._data.num << endl;
-
-	setVar("x", "hahaha");
-	cout << x._data.str << endl;
-
-	system("pause");
+	return 0;
 }

@@ -16,41 +16,27 @@ using namespace std;
 
 class JSData
 {
-	public:
+public:
 	string tname; //类型名
 	double num;   //存数值
 	string str;   //存字符串
-
-	JSData();
 };
-
-typedef vector<JSData> JSArray;
 
 class JSVariable
 {
-	public:
+public:
 	string name;  //变量名
 	string tname; //类型名
 	bool defined; //是否定义过
-	JSArray data; //Array数据
+	vector<JSData> data; //Array数据
 	JSData _data; //Number/Sring Data
 	int level; //
-
-	JSVariable();
-	JSVariable(string _name);
-	JSVariable(string _name, string _tname);
-
-	void operator=(JSVariable& b);
-	JSData value();
-	JSData at(int index);
 };
-
 typedef vector<JSVariable> JSVariables;
-
 //表示函数实体的类
 class JSFunction
 {
-	public:
+public:
 	string name;
 	JSVariables variables;
 	int levelcount;
@@ -60,7 +46,7 @@ class JSFunction
 //函数定义的类
 class JSFunctionDef
 {
-	public:
+public:
 	string name;
 	string rtype;
 	vector<string> paraname;
@@ -74,6 +60,7 @@ static vector<JSFunctionDef> FunctionDefs;
 static JSFunctions Stack;
 static JSVariables globals;
 
+void initStack();
 bool isexistFunc(string name, int numofpara);
 bool createFunc(string name, string rtype, vector<string>paras, char *code);
 JSVariable callFunc(string name, JSVariables paras);
@@ -86,9 +73,6 @@ bool isexistVar(string name);
 bool createVar(string var, bool isGlobal);
 JSVariable& getVariable(string name);
 bool setVar(string name, JSVariable val);
-bool setVar(string name, double number);
-bool setVar(string name, string str);
-bool setVar(string name, vector<JSData> data);
 bool unsetVar(string name);
 
 #endif
