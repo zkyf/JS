@@ -51,7 +51,8 @@ public:
 	string rtype;
 	vector<string> paraname;
 	int numofpara;
-	string code;
+	int startpos;
+	int endpos;
 };
 
 typedef vector<JSFunction> JSFunctions;
@@ -62,7 +63,7 @@ static JSVariables globals;
 
 void initStack();
 bool isexistFunc(string name, int numofpara);
-bool createFunc(string name, string rtype, vector<string>paras, char *code);
+bool createFunc(string name, string rtype, vector<string>paras, int strat, int end);
 JSVariable callFunc(string name, JSVariables paras);
 void setReturnval(JSVariable returnval);
 bool endcall(); //结束一个函数调用

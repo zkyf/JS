@@ -23,9 +23,9 @@ bool isexistFunc(string name, int numofpara)
 	return false;
 }
 
-bool createFunc(string name, string rtype, vector<string>paras, string code)
+bool createFunc(string name, string rtype, vector<string>paras, int start, int end)
 {
-	if (code == "")
+	if (start<=end)
 	{
 		return false;
 	}
@@ -44,7 +44,8 @@ bool createFunc(string name, string rtype, vector<string>paras, string code)
 	newfunc.name = name;
 	newfunc.rtype = rtype;
 	newfunc.numofpara = numofpara;
-	newfunc.code = code;
+	newfunc.startpos = start;
+	newfunc.endpos = end;
 	FunctionDefs.push_back(newfunc);
 	return true;
 }
